@@ -13,7 +13,6 @@ export default class MultiLineChartComponent extends Component {
   async getDataAndLoadChart() {
     await this.setupData();
     this.createChart();
-
   }
 
   async setupData() {
