@@ -34,11 +34,15 @@ export default class SimpleDemoComponent extends Component {
     svg.append('g')
       .call(d3.axisLeft(y));
 
-    svg.append("circle")
-      .attr("cx", 100).attr("cy", 100).attr("r", 40).style("fill", "blue");
-    svg.append("circle")
-      .attr("cx", 225).attr("cy", 100).attr("r", 40).style("fill", "red");
-    svg.append("circle")
-      .attr("cx", 350).attr("cy", 100).attr("r", 40).style("fill", "green");
+    // Create data
+    let data = [{ x: 10, y: 20 }, { x: 40, y: 90 }, { x: 80, y: 50 }]
+
+    svg.selectAll('whatever')
+      .data(data)
+      .enter()
+      .append('circle')
+      .attr('cx', (d => x(d.x)))
+      .attr('cy', (d => y(d.y)))
+      .attr('r', 7);
   }
 }
