@@ -37,15 +37,15 @@ export default class SimpleTimeSeriesComponent extends Component {
 
     svg.append('g')
       .attr('transform', `translate(0,${this.height})`)
-      .call(d3.axisBottom(xMapper));
+      .call(d3.axisBottom(xMapper).ticks(10).tickSizeOuter(0));
 
     // set up the y axis
     let yMapper = d3.scaleLinear()
-      .domain([0, 100])
+      .domain(d3.extent(data, d => d.value))
       .range([this.height, 0]);
 
     svg.append('g')
-      .call(d3.axisLeft(yMapper));
+      .call(d3.axisLeft(yMapper).ticks(5).tickSizeOuter(0));
 
     svg.selectAll('whatever')
       .data(data)
@@ -59,7 +59,7 @@ export default class SimpleTimeSeriesComponent extends Component {
   generateFakeTimeSeries() {
     const data = [];
     let d = moment();
-    for (let i = 0, v = 2; i < 60; ++i) {
+    for (let i = 0, v = 2; i < 24; ++i) {
       v += Math.random() - 0.5;
       v = Math.max(Math.min(v, 4), 0);
       data.push({
@@ -69,6 +69,7 @@ export default class SimpleTimeSeriesComponent extends Component {
 
       d = d.add(1, 'hour');
     }
+    console.log(data);
     return data;
   }
 }
