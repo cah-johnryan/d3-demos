@@ -2,6 +2,7 @@ import Component from '@glimmer/component';
 import { action } from '@ember/object';
 import * as d3 from "d3";
 
+// https://www.d3-graph-gallery.com/intro_d3js.html
 export default class SimpleDemoComponent extends Component {
   svgHeight = 400;
   svgWidth = 450;
