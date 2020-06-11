@@ -20,20 +20,20 @@ export default class SimpleDemoComponent extends Component {
       .append('g')
       .attr('transform', `translate(${this.margin.left},${this.margin.top})`);
 
-    let x = d3.scaleLinear()
+    let xMapper = d3.scaleLinear()
       .domain([0, 100])
       .range([0, this.chartWidth]);
 
     svg.append('g')
       .attr('transform', `translate(0,${this.chartHeight})`)
-      .call(d3.axisBottom(x));
+      .call(d3.axisBottom(xMapper));
 
-    let y = d3.scaleLinear()
+    let yMapper = d3.scaleLinear()
       .domain([0, 100])
       .range([this.chartHeight, 0]);
 
     svg.append('g')
-      .call(d3.axisLeft(y));
+      .call(d3.axisLeft(yMapper));
 
     // Create data
     let data = [{ x: 10, y: 20 }, { x: 40, y: 90 }, { x: 80, y: 50 }]
@@ -42,8 +42,8 @@ export default class SimpleDemoComponent extends Component {
       .data(data)
       .enter()
       .append('circle')
-      .attr('cx', (d => x(d.x)))
-      .attr('cy', (d => y(d.y)))
+      .attr('cx', (d => xMapper(d.x)))
+      .attr('cy', (d => yMapper(d.y)))
       .attr('r', 7);
   }
 }

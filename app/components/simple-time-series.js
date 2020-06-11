@@ -15,6 +15,11 @@ export default class SimpleTimeSeriesComponent extends Component {
 
   @action
   async getDataAndLoadChart() {
+
+    // Create fake data
+    // let data = [{ x: 10, y: 20 }, { x: 40, y: 90 }, { x: 80, y: 50 }]
+    let data = this.generateFakeTimeSeries();
+
     let svg = d3.select("#simple-time-series-container")
       .append('svg')
       .attr('width', this.viewportWidth)
@@ -26,32 +31,28 @@ export default class SimpleTimeSeriesComponent extends Component {
       .attr('transform', `translate(${this.margin.left},${this.margin.top})`);
 
     // set up the x axis
-    let x = d3.scaleLinear()
-      .domain([0, 100])
+    let xMapper = d3.scaleUtc()
+      .domain(d3.extent(data, d => d.date))
       .range([0, this.width]);
 
     svg.append('g')
       .attr('transform', `translate(0,${this.height})`)
-      .call(d3.axisBottom(x));
+      .call(d3.axisBottom(xMapper));
 
     // set up the y axis
-    let y = d3.scaleLinear()
+    let yMapper = d3.scaleLinear()
       .domain([0, 100])
       .range([this.height, 0]);
 
     svg.append('g')
-      .call(d3.axisLeft(y));
-
-    // Create fake data
-    // let data = [{ x: 10, y: 20 }, { x: 40, y: 90 }, { x: 80, y: 50 }]
-    let data = this.generateFakeTimeSeries();
+      .call(d3.axisLeft(yMapper));
 
     svg.selectAll('whatever')
       .data(data)
       .enter()
       .append('circle')
-      .attr('cx', (d => x(d.date)))
-      .attr('cy', (d => y(d.value)))
+      .attr('cx', (d => xMapper(d.date)))
+      .attr('cy', (d => yMapper(d.value)))
       .attr('r', 3);
   }
 
