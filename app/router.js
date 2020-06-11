@@ -9,5 +9,5 @@ export default class Router extends EmberRouter {
 Router.map(function() {
   this.route('multi-line-chart');
   this.route('simple-demo');
-  this.route('simple-linear');
+  this.route('simple-time-series');
 });

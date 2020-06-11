@@ -2,7 +2,7 @@ import Component from '@glimmer/component';
 import { action } from '@ember/object';
 import * as d3 from "d3";
 
-export default class SimpleLinearComponent extends Component {
+export default class SimpleTimeSeriesComponent extends Component {
   svgHeight = 400;
   svgWidth = 450;
 
@@ -12,7 +12,7 @@ export default class SimpleLinearComponent extends Component {
 
   @action
   async getDataAndLoadChart() {
-    let svg = d3.select("#simple-linear-container")
+    let svg = d3.select("#simple-time-series-container")
       .append('svg')
       .attr('width', this.svgWidth)
       .attr('height', this.svgHeight);

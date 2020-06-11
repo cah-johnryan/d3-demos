@@ -3,22 +3,22 @@ import { setupRenderingTest } from 'ember-qunit';
 import { render } from '@ember/test-helpers';
 import { hbs } from 'ember-cli-htmlbars';
 
-module('Integration | Component | simple-linear', function(hooks) {
+module('Integration | Component | simple-time-series', function(hooks) {
   setupRenderingTest(hooks);
 
   test('it renders', async function(assert) {
     // Set any properties with this.set('myProperty', 'value');
     // Handle any actions with this.set('myAction', function(val) { ... });
 
-    await render(hbs`<SimpleLinear />`);
+    await render(hbs`<SimpleTimeSeries />`);
 
     assert.equal(this.element.textContent.trim(), '');
 
     // Template block usage:
     await render(hbs`
-      <SimpleLinear>
+      <SimpleTimeSeries>
         template block text
-      </SimpleLinear>
+      </SimpleTimeSeries>
     `);
 
     assert.equal(this.element.textContent.trim(), 'template block text');
