@@ -3,9 +3,7 @@ import { action } from '@ember/object';
 import * as d3 from "d3";
 import * as moment from "moment";
 
-// https://observablehq.com/@sdaas/d3-timeseries
-// https://observablehq.com/@mbostock/global-temperature-trends
-export default class SimpleTimeSeriesComponent extends Component {
+export default class MultipleTimeSeriesComponent extends Component {
   d3Config = {
     viewportHeight: 400,
     viewportWidth: 900,
@@ -51,22 +49,33 @@ export default class SimpleTimeSeriesComponent extends Component {
   @action
   async getDataAndLoadChart() {
     const seedTime = moment();
-    const dataSeries1 = this.generateFakeTimeSeries(seedTime);
+    const dataSeries1 = this.generateFakeTimeSeries(seedTime.clone());
+    const dataSeries2 = this.generateFakeTimeSeries(seedTime.clone());
 
-    const svg = d3.select("#simple-time-series-container")
+    const svg = d3.select("#multiple-time-series-container")
       .append('svg')
       .attr('width', this.d3Config.viewportWidth)
       .attr('height', this.d3Config.viewportHeight);
 
-    const xMapper = this.xMapperGenerator(d3, this.d3Config, dataSeries1);
-    const yMapper = this.yMapperGenerator(d3, this.d3Config, dataSeries1);
+    const xMapper = this.xMapperGenerator(d3, this.d3Config, [].concat(dataSeries1, dataSeries2));
+    const yMapper = this.yMapperGenerator(d3, this.d3Config, [].concat(dataSeries1, dataSeries2));
 
     svg.selectAll('whatever')
       .data(dataSeries1)
       .enter()
       .append('circle')
-      .attr('cx', (d => xMapper(d.date)))
-      .attr('cy', (d => yMapper(d.value)))
+      .attr('cx', d => xMapper(d.date))
+      .attr('cy', d => yMapper(d.value))
+      .attr('fill', d3.rgb('black'))
+      .attr('r', 3);
+
+    svg.selectAll('whatever')
+      .data(dataSeries2)
+      .enter()
+      .append('circle')
+      .attr('cx', d => xMapper(d.date))
+      .attr('cy', d => yMapper(d.value))
+      .attr('fill', d3.rgb('steelblue'))
       .attr('r', 3);
 
     svg.append('g').call((g) => this.xAxis(d3, this.d3Config, g, xMapper));

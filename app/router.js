@@ -10,4 +10,5 @@ Router.map(function() {
   this.route('multi-line-chart');
   this.route('simple-demo');
   this.route('simple-time-series');
+  this.route('multiple-time-series');
 });
