@@ -26,7 +26,7 @@ export default class MultipleTimeSeriesComponent extends Component {
     return g.attr("transform", `translate(0,${d3Config.viewportHeight - d3Config.margin.bottom})`).call(
       d3
         .axisBottom(xMapper)
-        .ticks(10)
+        .ticks(16)
         .tickSizeOuter(0)
     );
   }
