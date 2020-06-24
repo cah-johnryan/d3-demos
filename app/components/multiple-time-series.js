@@ -9,7 +9,8 @@ export default class MultipleTimeSeriesComponent extends Component {
     viewportWidth: 900,
     margin: { top: 30, right: 30, bottom: 50, left: 50 },
     xAxisTitle: 'Date',
-    yAxisTitle: 'Temperature'
+    yAxisTitle: 'Temperature',
+    elementSize: 3
   };
 
   dataConfig = {
@@ -63,7 +64,7 @@ export default class MultipleTimeSeriesComponent extends Component {
 
     const seedTime = moment();
 
-    for (const [seriesId, seriesConfig] of Object.entries(this.dataConfig)) {
+    for (const seriesId of Object.keys(this.dataConfig)) {
       let fakeTimeSeries = this.generateFakeTimeSeries(seriesId, seedTime.clone());
       dataToRender.push(...fakeTimeSeries);
     }
@@ -85,7 +86,7 @@ export default class MultipleTimeSeriesComponent extends Component {
         .attr('cx', d => xMapper(d.date))
         .attr('cy', d => yMapper(d.value))
         .attr('fill', d3.rgb(seriesConfig.color))
-        .attr('r', 3);
+        .attr('r', this.d3Config.elementSize);
     }
 
     svg.append('g').call((g) => this.xAxis(d3, this.d3Config, g, xMapper));
