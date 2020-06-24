@@ -7,7 +7,9 @@ export default class MultipleTimeSeriesComponent extends Component {
   d3Config = {
     viewportHeight: 400,
     viewportWidth: 900,
-    margin: { top: 30, right: 30, bottom: 50, left: 50 }
+    margin: { top: 30, right: 30, bottom: 50, left: 50 },
+    xAxisTitle: 'Date',
+    yAxisTitle: 'Temperature'
   };
 
   constructor() {
@@ -89,7 +91,7 @@ export default class MultipleTimeSeriesComponent extends Component {
       .attr('text-anchor', 'end')
       .attr('x', this.d3Config.width / 2)
       .attr('y', this.d3Config.height + this.d3Config.margin.top + this.d3Config.margin.bottom * 0.8)
-      .text('Date');
+      .text(this.d3Config.xAxisTitle);
 
     // Y axis label:
     svg.append('text')
@@ -97,7 +99,7 @@ export default class MultipleTimeSeriesComponent extends Component {
       .attr('transform', 'rotate(-90)')
       .attr('y', this.d3Config.margin.left * 0.4)
       .attr('x', -this.d3Config.height / 2)
-      .text('Temperature');
+      .text(this.d3Config.yAxisTitle);
   }
 
   generateFakeTimeSeries(seedTime) {
