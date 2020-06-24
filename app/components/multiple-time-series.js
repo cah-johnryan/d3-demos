@@ -10,7 +10,8 @@ export default class MultipleTimeSeriesComponent extends Component {
     margin: { top: 30, right: 30, bottom: 50, left: 50 },
     xAxisTitle: 'Date',
     yAxisTitle: 'Temperature',
-    elementSize: 3
+    elementSize: 3,
+    xAxisTickSize: 16
   };
 
   dataConfig = {
@@ -38,7 +39,7 @@ export default class MultipleTimeSeriesComponent extends Component {
     return g.attr('transform', `translate(0,${d3Config.viewportHeight - d3Config.margin.bottom})`).call(
       d3
         .axisBottom(xMapper)
-        .ticks(16)
+        .ticks(d3Config.xAxisTickSize)
         .tickSizeOuter(0)
     );
   }
