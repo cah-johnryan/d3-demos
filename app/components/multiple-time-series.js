@@ -12,6 +12,15 @@ export default class MultipleTimeSeriesComponent extends Component {
     yAxisTitle: 'Temperature'
   };
 
+  dataConfig = {
+    'TemperatureA': {
+      color: 'steelblue'
+    },
+    'TemperatureB': {
+      color: 'black'
+    },
+  }
+
   constructor() {
     super(...arguments);
     this.d3Config.height = this.d3Config.viewportHeight - this.d3Config.margin.top - this.d3Config.margin.bottom
@@ -50,38 +59,34 @@ export default class MultipleTimeSeriesComponent extends Component {
 
   @action
   async getDataAndLoadChart() {
+    let dataToRender = [];
+
     const seedTime = moment();
-    const dataToRender = [];
-    const dataSeries1 = this.generateFakeTimeSeries(seedTime.clone());
-    const dataSeries2 = this.generateFakeTimeSeries(seedTime.clone());
-    dataToRender.push(dataSeries1);
-    dataToRender.push(dataSeries2);
+
+    for (const [seriesId, seriesConfig] of Object.entries(this.dataConfig)) {
+      let fakeTimeSeries = this.generateFakeTimeSeries(seriesId, seedTime.clone());
+      dataToRender.push(...fakeTimeSeries);
+    }
 
     const svg = d3.select('#multiple-time-series-container')
       .append('svg')
       .attr('width', this.d3Config.viewportWidth)
       .attr('height', this.d3Config.viewportHeight)
 
-    const xMapper = this.xMapperGenerator(d3, this.d3Config, [].concat(dataSeries1, dataSeries2));
-    const yMapper = this.yMapperGenerator(d3, this.d3Config, [].concat(dataSeries1, dataSeries2));
+    const xMapper = this.xMapperGenerator(d3, this.d3Config, dataToRender);
+    const yMapper = this.yMapperGenerator(d3, this.d3Config, dataToRender);
 
-    svg.selectAll('whatever')
-      .data(dataSeries1)
-      .enter()
-      .append('circle')
-      .attr('cx', d => xMapper(d.date))
-      .attr('cy', d => yMapper(d.value))
-      .attr('fill', d3.rgb('black'))
-      .attr('r', 3);
-
-    svg.selectAll('whatever')
-      .data(dataSeries2)
-      .enter()
-      .append('circle')
-      .attr('cx', d => xMapper(d.date))
-      .attr('cy', d => yMapper(d.value))
-      .attr('fill', d3.rgb('steelblue'))
-      .attr('r', 3);
+    for (const [seriesId, seriesConfig] of Object.entries(this.dataConfig)) {
+      const seriesData = dataToRender.filter(d => d.seriesId === seriesId);
+      svg.selectAll('whatever')
+        .data(seriesData)
+        .enter()
+        .append('circle')
+        .attr('cx', d => xMapper(d.date))
+        .attr('cy', d => yMapper(d.value))
+        .attr('fill', d3.rgb(seriesConfig.color))
+        .attr('r', 3);
+    }
 
     svg.append('g').call((g) => this.xAxis(d3, this.d3Config, g, xMapper));
     svg.append('g').call((g) => this.yAxis(d3, this.d3Config, g, yMapper));
@@ -102,13 +107,14 @@ export default class MultipleTimeSeriesComponent extends Component {
       .text(this.d3Config.yAxisTitle);
   }
 
-  generateFakeTimeSeries(seedTime) {
-    const data = [];
+  generateFakeTimeSeries(seriesId, seedTime) {
+    let data = [];
     let d = seedTime;
     for (let i = 0, v = 2; i < 48; ++i) {
       v += Math.random() - 0.5;
       v = Math.max(Math.min(v, 4), 0);
       data.push({
+        seriesId: seriesId,
         date: d.toDate(),
         value: v
       });
