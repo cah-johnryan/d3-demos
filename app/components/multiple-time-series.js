@@ -85,19 +85,19 @@ export default class MultipleTimeSeriesComponent extends Component {
     svg.append('g').call((g) => this.yAxis(d3, this.d3Config, g, yMapper));
 
     // X axis label:
-    svg.append("text")
-      .attr("text-anchor", "end")
-      .attr("x", this.d3Config.width / 2)
-      .attr("y", this.d3Config.height + this.d3Config.margin.top + this.d3Config.margin.bottom * 0.8)
-      .text("Date");
+    svg.append('text')
+      .attr('text-anchor', 'end')
+      .attr('x', this.d3Config.width / 2)
+      .attr('y', this.d3Config.height + this.d3Config.margin.top + this.d3Config.margin.bottom * 0.8)
+      .text('Date');
 
     // Y axis label:
-    svg.append("text")
-      .attr("text-anchor", "end")
-      .attr("transform", "rotate(-90)")
-      .attr("y", this.d3Config.margin.left * 0.4)
-      .attr("x", -this.d3Config.height / 2)
-      .text("Temperature");
+    svg.append('text')
+      .attr('text-anchor', 'end')
+      .attr('transform', 'rotate(-90)')
+      .attr('y', this.d3Config.margin.left * 0.4)
+      .attr('x', -this.d3Config.height / 2)
+      .text('Temperature');
   }
 
   generateFakeTimeSeries(seedTime) {
