@@ -17,10 +17,8 @@ export default class TimeSeriesWithThresholdsComponent extends Component {
 
   dataConfig = {
     'TemperatureA': {
-      color: 'steelblue'
     },
     'TemperatureB': {
-      color: 'black'
     },
   }
 
@@ -100,6 +98,7 @@ export default class TimeSeriesWithThresholdsComponent extends Component {
   }
 
   renderScatterPlotData(svg, dataToRender, xScale, yScale) {
+    let seriesNumber = 1;
     for (const [seriesId, seriesConfig] of Object.entries(this.dataConfig)) {
       const seriesData = dataToRender.filter(d => d.seriesId === seriesId);
       svg.selectAll('whatever')
@@ -108,8 +107,8 @@ export default class TimeSeriesWithThresholdsComponent extends Component {
         .append('circle')
         .attr('cx', d => xScale(d.date))
         .attr('cy', d => yScale(d.value))
-        .attr('fill', d3.rgb(seriesConfig.color))
-        .attr('r', this.d3Config.elementSize);
+        .attr('r', this.d3Config.elementSize)
+        .attr('class', `dot series-${seriesNumber++} ${seriesId}`);
     }
   }
 
