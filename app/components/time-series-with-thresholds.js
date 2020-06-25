@@ -30,31 +30,32 @@ export default class TimeSeriesWithThresholdsComponent extends Component {
     this.d3Config.width = this.d3Config.viewportWidth - this.d3Config.margin.left - this.d3Config.margin.right
   }
 
-  xMapperGenerator(d3, d3Config, dataSeries) {
+  xScaleGenerator(d3, d3Config, dataSeries) {
     return d3.scaleTime()
       .domain(d3.extent(dataSeries, d => d.date))
       .range([d3Config.margin.left, d3Config.viewportWidth - d3Config.margin.right]);
   }
 
-  xAxis(d3, d3Config, g, xMapper) {
-    return g.attr('transform', `translate(0,${d3Config.viewportHeight - d3Config.margin.bottom})`).call(
-      d3
-        .axisBottom(xMapper)
-        .ticks(d3Config.xAxisTickSize)
-        .tickSizeOuter(0)
-    );
-  }
-
-  yMapperGenerator(d3, d3Config, dataSeries) {
+  yScaleGenerator(d3, d3Config, dataSeries) {
     return d3.scaleLinear()
       .domain(d3.extent(dataSeries, d => d.value))
       .range([d3Config.viewportHeight - d3Config.margin.bottom, d3Config.margin.top]);
   }
 
-  yAxis(d3, d3Config, g, yMapper) {
+  xAxis(d3, d3Config, g, xScale) {
+    return g.attr('transform', `translate(0,${d3Config.viewportHeight - d3Config.margin.bottom})`).call(
+      d3
+        .axisBottom(xScale)
+        .ticks(d3Config.xAxisTickSize)
+        .tickSizeOuter(0)
+    );
+  }
+
+
+  yAxis(d3, d3Config, g, yScale) {
     return g.attr('transform', `translate(${d3Config.margin.left},0)`).call(
       d3
-        .axisLeft(yMapper)
+        .axisLeft(yScale)
         .ticks(d3Config.yAxisTickSize)
         .tickSizeOuter(0)
     );
@@ -71,29 +72,19 @@ export default class TimeSeriesWithThresholdsComponent extends Component {
       dataToRender.push(...fakeTimeSeries);
     }
 
-    const svg = d3.select('#time-series-with-thresholds-container')
-      .append('svg')
-      .attr('width', this.d3Config.viewportWidth)
-      .attr('height', this.d3Config.viewportHeight)
+    const svg = this.createSvg('#time-series-with-thresholds-container');
 
-    const xMapper = this.xMapperGenerator(d3, this.d3Config, dataToRender);
-    const yMapper = this.yMapperGenerator(d3, this.d3Config, dataToRender);
+    const xScale = this.xScaleGenerator(d3, this.d3Config, dataToRender);
+    const yScale = this.yScaleGenerator(d3, this.d3Config, dataToRender);
+    this.createXandYaxis(svg, xScale, yScale);
 
-    for (const [seriesId, seriesConfig] of Object.entries(this.dataConfig)) {
-      const seriesData = dataToRender.filter(d => d.seriesId === seriesId);
-      svg.selectAll('whatever')
-        .data(seriesData)
-        .enter()
-        .append('circle')
-        .attr('cx', d => xMapper(d.date))
-        .attr('cy', d => yMapper(d.value))
-        .attr('fill', d3.rgb(seriesConfig.color))
-        .attr('r', this.d3Config.elementSize);
-    }
+    this.renderScatterPlotData(svg, dataToRender, xScale, yScale);
 
-    svg.append('g').call((g) => this.xAxis(d3, this.d3Config, g, xMapper));
-    svg.append('g').call((g) => this.yAxis(d3, this.d3Config, g, yMapper));
 
+    this.renderAxisLabels(svg);
+  }
+
+  renderAxisLabels(svg) {
     // X axis label:
     svg.append('text')
       .attr('text-anchor', 'end')
@@ -108,6 +99,32 @@ export default class TimeSeriesWithThresholdsComponent extends Component {
       .attr('y', this.d3Config.margin.left * 0.4)
       .attr('x', -this.d3Config.height / 2)
       .text(this.d3Config.yAxisTitle);
+  }
+
+  renderScatterPlotData(svg, dataToRender, xScale, yScale) {
+    for (const [seriesId, seriesConfig] of Object.entries(this.dataConfig)) {
+      const seriesData = dataToRender.filter(d => d.seriesId === seriesId);
+      svg.selectAll('whatever')
+        .data(seriesData)
+        .enter()
+        .append('circle')
+        .attr('cx', d => xScale(d.date))
+        .attr('cy', d => yScale(d.value))
+        .attr('fill', d3.rgb(seriesConfig.color))
+        .attr('r', this.d3Config.elementSize);
+    }
+  }
+
+  createXandYaxis(svg, xScale, yScale) {
+    svg.append('g').call((g) => this.xAxis(d3, this.d3Config, g, xScale));
+    svg.append('g').call((g) => this.yAxis(d3, this.d3Config, g, yScale));
+  }
+
+  createSvg(cssSelector) {
+    return d3.select(cssSelector)
+      .append('svg')
+      .attr('width', this.d3Config.viewportWidth)
+      .attr('height', this.d3Config.viewportHeight);
   }
 
   generateFakeTimeSeries(seriesId, seedTime) {
