@@ -66,7 +66,6 @@ export default class TimeSeriesWithThresholdsComponent extends Component {
     let dataToRender = [];
 
     const seedTime = moment();
-
     for (const seriesId of Object.keys(this.dataConfig)) {
       let fakeTimeSeries = this.generateFakeTimeSeries(seriesId, seedTime.clone());
       dataToRender.push(...fakeTimeSeries);
@@ -79,7 +78,6 @@ export default class TimeSeriesWithThresholdsComponent extends Component {
     this.createXandYaxis(svg, xScale, yScale);
 
     this.renderScatterPlotData(svg, dataToRender, xScale, yScale);
-
 
     this.renderAxisLabels(svg);
   }
