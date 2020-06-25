@@ -49,7 +49,6 @@ export default class TimeSeriesWithThresholdsComponent extends Component {
     );
   }
 
-
   yAxis(d3, d3Config, g, yScale) {
     return g.attr('transform', `translate(${d3Config.margin.left},0)`).call(
       d3
@@ -81,14 +80,12 @@ export default class TimeSeriesWithThresholdsComponent extends Component {
   }
 
   renderAxisLabels(svg) {
-    // X axis label:
     svg.append('text')
       .attr('text-anchor', 'end')
       .attr('x', this.d3Config.width / 2)
       .attr('y', this.d3Config.height + this.d3Config.margin.top + this.d3Config.margin.bottom * 0.8)
       .text(this.d3Config.xAxisTitle);
 
-    // Y axis label:
     svg.append('text')
       .attr('text-anchor', 'end')
       .attr('transform', 'rotate(-90)')
