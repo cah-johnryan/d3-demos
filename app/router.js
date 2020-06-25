@@ -11,4 +11,5 @@ Router.map(function() {
   this.route('simple-demo');
   this.route('simple-time-series');
   this.route('multiple-time-series');
+  this.route('time-series-with-thresholds');
 });
