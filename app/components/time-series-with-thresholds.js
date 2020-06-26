@@ -12,7 +12,11 @@ export default class TimeSeriesWithThresholdsComponent extends Component {
     yAxisTitle: 'Temperature',
     elementSize: 3,
     xAxisTickSize: 16,
-    yAxisTickSize: 5
+    yAxisTickSize: 5,
+    highTemperatureValue: 3,
+    highTemperatureValueText: 'High Temperature Value',
+    lowTemperatureValue: 1,
+    lowTemperatureValueText: 'Low Temperature Value'
   };
 
   dataConfig = {
@@ -26,6 +30,85 @@ export default class TimeSeriesWithThresholdsComponent extends Component {
     super(...arguments);
     this.d3Config.height = this.d3Config.viewportHeight - this.d3Config.margin.top - this.d3Config.margin.bottom
     this.d3Config.width = this.d3Config.viewportWidth - this.d3Config.margin.left - this.d3Config.margin.right
+  }
+
+  @action
+  async getDataAndLoadChart() {
+    let dataToRender = [];
+
+    const seedTime = moment();
+    for (const seriesId of Object.keys(this.dataConfig)) {
+      let fakeTimeSeries = this.generateFakeTimeSeries(seriesId, seedTime.clone());
+      dataToRender.push(...fakeTimeSeries);
+    }
+
+    const { highTemperatureValueLine, lowTemperatureValueLine } = this.buildTemperatureThresholdLines(dataToRender);
+
+    const svg = this.createSvg('#time-series-with-thresholds-container');
+
+    const xScale = this.xScaleGenerator(d3, this.d3Config, [].concat(dataToRender, lowTemperatureValueLine, highTemperatureValueLine));
+    const yScale = this.yScaleGenerator(d3, this.d3Config, [].concat(dataToRender, lowTemperatureValueLine, highTemperatureValueLine));
+    this.createXandYaxis(svg, xScale, yScale);
+
+    this.renderScatterPlotData(svg, dataToRender, xScale, yScale);
+
+    this.renderTemperatureThresholdLines(svg, xScale, yScale, highTemperatureValueLine, lowTemperatureValueLine);
+
+    this.renderAxisLabels(svg);
+  }
+
+  renderTemperatureThresholdLines(svg, xScale, yScale, highTemperatureValueLine, lowTemperatureValueLine) {
+    var valueline = d3.line()
+      .x(function (d) { return xScale(d.date); })
+      .y(function (d) { return yScale(d.value); });
+
+    svg.append('path')
+      .datum(highTemperatureValueLine)
+      .attr('class', 'temperature-threshold-line')
+      .attr('d', valueline);
+
+    svg.append('path')
+      .datum(lowTemperatureValueLine)
+      .attr('class', 'temperature-threshold-line')
+      .attr('d', valueline);
+  }
+
+  buildTemperatureThresholdLines(dataToRender) {
+    const minDate = dataToRender.reduce((currentMinDate, temperatureReading) => {
+      currentMinDate = currentMinDate > temperatureReading.date ? temperatureReading.date : currentMinDate;
+      return currentMinDate;
+    }, dataToRender[0].date);
+    const maxDate = dataToRender.reduce((currentMaxDate, temperatureReading) => {
+      currentMaxDate = currentMaxDate < temperatureReading.date ? temperatureReading.date : currentMaxDate;
+      return currentMaxDate;
+    }, dataToRender[0].date);
+
+    const highTemperatureValueLine = [
+      {
+        seriesId: this.d3Config.highTemperatureValueText,
+        date: minDate,
+        value: this.d3Config.highTemperatureValue
+      },
+      {
+        seriesId: this.d3Config.highTemperatureValueText,
+        date: maxDate,
+        value: this.d3Config.highTemperatureValue
+      }
+    ];
+
+    const lowTemperatureValueLine = [
+      {
+        seriesId: this.d3Config.lowTemperatureValueText,
+        date: minDate,
+        value: this.d3Config.lowTemperatureValue
+      },
+      {
+        seriesId: this.d3Config.lowTemperatureValueText,
+        date: maxDate,
+        value: this.d3Config.lowTemperatureValue
+      }
+    ];
+    return { highTemperatureValueLine, lowTemperatureValueLine };
   }
 
   xScaleGenerator(d3, d3Config, dataSeries) {
@@ -56,27 +139,6 @@ export default class TimeSeriesWithThresholdsComponent extends Component {
         .ticks(d3Config.yAxisTickSize)
         .tickSizeOuter(0)
     );
-  }
-
-  @action
-  async getDataAndLoadChart() {
-    let dataToRender = [];
-
-    const seedTime = moment();
-    for (const seriesId of Object.keys(this.dataConfig)) {
-      let fakeTimeSeries = this.generateFakeTimeSeries(seriesId, seedTime.clone());
-      dataToRender.push(...fakeTimeSeries);
-    }
-
-    const svg = this.createSvg('#time-series-with-thresholds-container');
-
-    const xScale = this.xScaleGenerator(d3, this.d3Config, dataToRender);
-    const yScale = this.yScaleGenerator(d3, this.d3Config, dataToRender);
-    this.createXandYaxis(svg, xScale, yScale);
-
-    this.renderScatterPlotData(svg, dataToRender, xScale, yScale);
-
-    this.renderAxisLabels(svg);
   }
 
   renderAxisLabels(svg) {
