@@ -1,0 +1,6 @@
+<div class="time-series-with-thresholds-container" {{did-insert this.loadChartData}}>
+  {{#if (not this.isLoadingChartData)}}
+  <TimeSeriesWithThresholds @d3Config={{this.d3Config}} @dataToRender={{this.chartDataToRender}}>
+  </TimeSeriesWithThresholds>
+  {{/if}}
+</div>
