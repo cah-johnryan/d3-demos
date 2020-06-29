@@ -12,4 +12,5 @@ Router.map(function() {
   this.route('simple-time-series');
   this.route('multiple-time-series');
   this.route('time-series-with-thresholds');
+  this.route('temperatures-over-time');
 });

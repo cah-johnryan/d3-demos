@@ -1,0 +1,7 @@
+<div class="temperatures-over-time" {{did-insert this.loadChartData}}>
+  <h1>Temperature over time demo in EmberJS and D3</h1>
+  {{#if (not this.isLoadingChartData)}}
+  <TemperaturesOverTimeChart @d3Config={{this.d3Config}} @dataToRender={{this.chartDataToRender}}>
+  </TemperaturesOverTimeChart>
+  {{/if}}
+</div>

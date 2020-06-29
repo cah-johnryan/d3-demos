@@ -19,7 +19,8 @@ body {
 }
 
 /* Style the lines by removing the fill and applying a stroke */
-.d3-graph .temperature-threshold-line {
+.d3-graph .high-value-threshold-line,
+.d3-graph .low-value-threshold-line {
   fill: none;
   stroke: red;
   stroke-width: 1;
