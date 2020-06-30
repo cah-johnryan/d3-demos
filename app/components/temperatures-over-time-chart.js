@@ -1,5 +1,4 @@
 import { action } from '@ember/object';
-import * as d3 from 'd3';
 import D3MultipleSeriesOverTime from '../objects/d3-multiple-series-over-time';
 
 export default class TemperaturesOverTimeChartComponent extends D3MultipleSeriesOverTime {
