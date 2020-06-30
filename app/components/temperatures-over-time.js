@@ -5,8 +5,8 @@ import * as moment from 'moment';
 
 export default class TemperaturesOverTimeComponent extends Component {
   d3Config = {
-    viewportHeight: 600,
-    viewportWidth: 1350,
+    viewportHeight: 400,
+    viewportWidth: 900,
     margin: { top: 30, right: 30, bottom: 50, left: 50 },
     xAxisTitle: 'Date',
     yAxisTitle: 'Temperature (°C)',
